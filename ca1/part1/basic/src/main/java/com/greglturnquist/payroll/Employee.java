@@ -32,13 +32,27 @@ public class Employee {
 	private String firstName;
 	private String lastName;
 	private String description;
+	private int jobYears;
 
-	private Employee() {}
+	public Employee() {}
 
-	public Employee(String firstName, String lastName, String description) {
+	public Employee(String firstName, String lastName, String description, int jobYears) throws Exception {
+		if(!isNameValid(firstName)) throw new Exception("First name cannot be empty");
 		this.firstName = firstName;
+		if(!isNameValid(lastName)) throw new Exception("Last name cannot be empty");
 		this.lastName = lastName;
+		if(!isNameValid(description)) throw new Exception("Description cannot be empty");
 		this.description = description;
+		if(!isJobYearsValid(jobYears)) throw new Exception("Job Years cannot be negative");
+		this.jobYears = jobYears;
+	}
+	private boolean isNameValid(String text){
+		if (text == null || text.isBlank()) return false;
+		return true;
+	}
+	private boolean isJobYearsValid(int years){
+		if (years < 0) return false;
+		return true;
 	}
 
 	@Override
@@ -90,14 +104,19 @@ public class Employee {
 		this.description = description;
 	}
 
+	public int getJobYears() {return jobYears;}
+
+	public void setJobYears(int jobYears){this.jobYears = jobYears;}
+
 	@Override
 	public String toString() {
 		return "Employee{" +
-			"id=" + id +
-			", firstName='" + firstName + '\'' +
-			", lastName='" + lastName + '\'' +
-			", description='" + description + '\'' +
-			'}';
+				"id=" + id +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", description='" + description + '\'' +
+				", jobYears='" + jobYears + '\'' +
+				'}';
 	}
 }
 // end::code[]
