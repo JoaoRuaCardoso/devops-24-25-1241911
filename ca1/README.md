@@ -15,8 +15,19 @@
 - [Introduction](#introduction)
 - [Environment Setup](#environment-setup)
 - [Part 1: Development Without Branches](#part-1-development-without-branches)
-    - [Goals and Requirements](#goals-and-requirements)
-    - [Key Developments](#key-developments)
+  - [Goals and Requirements](#goals-and-requirements)
+  - [Key Developments](#key-developments)
+- [Part 2: Development Using Branches](#part-2-development-using-branches)
+  - [Goals and Requirements](#goals-and-requirements-1)
+  - [Key Developments](#key-developments-1)
+- [Final Results](#final-results)
+  - [Implementation](#implementation)
+  - [Branches](#branches)
+  - [Tags](#tags)
+  - [Issue Tracking](#issue-tracking)
+- [Alternative Solution](#alternative-solution)
+  - [Comparison of Fossil and Git](#comparison-of-svn-and-git)
+  - [Utilizing Fossil for the Assignment](#utilizing-Fossil-for-the-assignment)
 - [Conclusion](#conclusion)
 
 ## Introduction
@@ -462,9 +473,178 @@ class Employee extends React.Component{
 
 5. **Debug the server and client parts of the solution.**
 
-After verifying the `jobYears` field's integration, I ran the application using `./mvnw spring-boot:run` to test its real-time functionality at `http://localhost:8080/`. This step ensured smooth feature operation and compatibility. I also reviewed the code to verify `jobYears` handling on both server and client sides.
+After verifying the `jobYears` field's integration, I ran the application using `mvn spring-boot:run` to test its real-time functionality at `http://localhost:8080/`. This step ensured smooth feature operation and compatibility. I also reviewed the code to verify `jobYears` handling on both server and client sides.
 
 6. **End of the assignment**
 
-Once satisfied with the stability and performance of the new feature, I committed the changes to the repository with a descriptive message outlining the enhancements. Following this, the updated code was pushed to the remote server to share the advancements with the team and maintain the project's collaborative workflow. To mark this significant update, I tagged the commit with `v1.2.0`, following the semantic versioning pattern adopted for the project. At the end of the assignment.
+Once satisfied with the stability and performance of the new feature, I committed the changes to the repository with a descriptive message outlining the enhancements. Following this, the updated code was pushed to the remote server to share the advancements with the team and maintain the project's collaborative workflow. To mark this significant update, I tagged the commit with `v1.2.0`, following the semantic versioning pattern adopted for the project.
+Create tag ca1-part1.1 as result of the end of the first assignment.
 
+## Part 2: Development Using Branches
+
+### Goals and Requirements
+
+- The second part focuses on using branches for features and bug fixes, ensuring isolated development and proper merge strategies.
+- It requires creating feature branches to avoid interfering with the main codebase until merging.
+- The part ends with tagging the master branch after merges to mark new versions, highlighting effective version control.
+
+### Key Developments
+
+In the second part, branch-based development was used to improve features and fix bugs while keeping the master branch stable for publishing the Tutorial React.js and Spring Data REST Application.
+
+Since the steps for adding features and fixing bugs are similar to Part 1, the code is not repeated. The key difference is the use of branches. Here are the main steps:
+
+1. **Start using the master branch**
+
+To ensure I was in the correct branch, especially the master branch for stable releases, I used the `git branch` command. This was crucial for verifying my current branch, marked by an asterisk (*) in the output.
+
+2. **Develop new features in branches**
+
+During the development phase of adding an `email field`, branch management was essential. A dedicated `email-field` branch was created to encapsulate all related changes. After switching to this branch, I used the `git branch` command to confirm the switch. The commands used were:
+```shell
+git branch
+git branch email-field
+git checkout email-field
+git branch
+```
+
+3. **Integration and Testing of the Email Field**
+
+The process of adding `email` field support and validation followed a similar approach to the `jobYears` field in Part 1. Here are the key steps:
+- **Code Implementation**: Like the previous feature development, I extended the `Employee` class to include an `email` field with getter and setter methods. Data models, forms, and views were updated to integrate the new field into both the frontend and backend.
+- **Unit Testing**: Following the established pattern, I wrote comprehensive unit tests to verify the correct creation of Employee instances with the new email field and to enforce validation rules, such as non-null and non-empty values for the email attribute.
+- **Debugging**: The server and client were thoroughly debugged to resolve any issues from adding the email field, ensuring smooth operation and a seamless user experience.
+
+4. **Merge the code with the master**
+
+Completing the `email` field feature involved integrating changes into the main branch and updating the version. The finalized changes in `email-field` were committed and pushed. A no-fast-forward merge preserved history, followed by pushing the updates. Finally, the new version was tagged and pushed. The commands used were:
+```shell
+# Commit the feature changes:
+git add .
+git commit -m "added email field"
+
+# Push the feature branch upstream:
+git push --set-upstream origin email-field
+
+# Switch to the main branch and merge changes:
+git checkout master
+git merge --no-ff email-field
+
+# Push the merged changes to update the main branch:
+git push
+
+# Tag the new version and push the tag:
+git tag V1.3.0 
+git push origin V1.3.0
+```
+
+5. **Create a new branch to fix a bug**
+
+To fix the email validation bug in the `Employee` class, a `fix-invalid-email` branch was created following the usual workflow. Development, testing, and merging followed previous practices, ensuring code integrity and stability.
+The bug fix focused on enhancing the `Employee` class with validation logic to ensure the email field contains an "@" sign. The following code snippet illustrates the added validation:
+
+```java
+private boolean isEmailValid(String email) {
+		return email != null && email.contains("@");
+	}
+```
+6. **End of the assignment**
+
+After implementing and testing the fix, the changes were merged into the master branch, and the version was updated to `V1.3.1` to reflect the minor fix. The repository was then tagged as `ca1-part2` to mark the assignment's completion.
+
+## Final Results
+
+### Implementation
+Bellow follows all the new features, the final state of the application is illustrated below:
+
+[![image.png](https://i.postimg.cc/N0DkdGJP/image.png)](https://postimg.cc/9449M2jG)
+
+The initial model included First Name, Last Name, and Description. Development began with Job Title, followed by Job Years in Part 1 of CA1 to track tenure. In Part 2 of CA1, the Email field was added for contact information.
+
+### Branches
+The image below reveals the existing branches in the repository, as output by the `git branch` command.
+
+[![image.png](https://i.postimg.cc/sxjbw21X/image.png)](https://postimg.cc/LYWys2tK)
+
+Image bellow shows the chronological sequence os branches
+
+[![image.png](https://i.postimg.cc/MHR2nLc0/image.png)](https://postimg.cc/T5RHSCJh)
+
+This assignment taught me the value of using branches to isolate changes for specific features or fixes. This approach maintains codebase stability while ensuring a clear and structured change history.
+
+### Tags
+
+[![image.png](https://i.postimg.cc/c4fqBPFP/image.png)](https://postimg.cc/jLqks30h)
+
+Using tags showed me how to mark key points in the project's history, making it easier to track progress and revert to previous versions when needed.
+
+### Issue Tracking
+
+During development, 18 issues were created on GitHub to track and manage problems. These issues were resolved and closed by including fixes #1 to fixes #18 in the commit messages. This practice ensures a clear history of problems and solutions while automatically closing issues when commits are pushed. Below is a visual representation of the issues created and closed during the assignment:
+
+[![image.png](https://i.postimg.cc/x8JXZ9Xv/image.png)](https://postimg.cc/BP3ZL9cb)
+
+Issues serve multiple purposes in a project, such as tracking bugs, feature requests, and tasks. They can be assigned, labeled, and linked to commits or pull requests. Moving forward, the goal is to integrate issues throughout development to improve task management, progress tracking, and team collaboration.
+
+## Alternative Solution
+In seeking an alternative to Git for version control, Fossil offers a distinct approach with its centralized model, contrasting Git's decentralized nature. This section compares SVN to Git in terms of version control features and describes how SVN could be utilized to achieve the goals set forth in this assignment.
+
+### Comparison of SVN and Git
+
+# Fossil vs. Git Comparison
+
+| Feature              | Fossil                                                                                             | Git                                                                                                                    |
+|----------------------|--------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| **Architecture**      | Centralized, with a single repository as the source of truth.                                      | Distributed, allowing multiple full-version repositories for redundancy and collaboration.                             |
+| **Versioning Model**  | Snapshot-based, storing the state of the entire project at each commit.                           | Snapshot-based, tracking the state of the entire repository at each commit.                                           |
+| **Branching & Merging**| Efficient branching and merging with simpler workflows compared to Git.                           | Efficient branching and merging, ideal for parallel development workflows.                                             |
+| **Binary Files Handling**| Efficient handling of binary files, optimized with delta storage.                                | Stores full binary files per change, increasing repository size but ensuring all versions are accessible.              |
+
+---
+
+# Utilizing Fossil for the Assignment
+
+### Repository Setup and Import
+Set up a **Fossil** repository and import the project files:
+
+```bash
+# Create a new Fossil repository
+fossil init /path/to/fossil_repository.fossil
+
+# Import the project into the Fossil repository
+fossil open /path/to/fossil_repository.fossil
+fossil import /path/to/TutorialReactSpringDataREST
+```
+### Feature Development and Branching
+
+```bash
+# Create a branch for the new feature
+fossil branch new-feature
+```
+### Committing and Tagging
+
+```bash
+# Commit changes in the working directory
+fossil commit -m "Implemented new feature"
+
+# Tag a stable release
+fossil tag v1.0 "Tagging version 1.0"
+
+```
+
+### Merging and Deployment Preparation
+
+```bash
+# Merge the feature branch into the trunk
+fossil merge new-feature
+
+# Commit the merge
+fossil commit -m "Merged feature branch into trunk"
+
+```
+## Conclusion
+
+Completing the Version Control with Git assignment expanded my understanding of version control systems in software development. Part 1 focused on basic Git concepts, such as modifying the master branch and committing/tagging changes. Part 2 introduced branching, deepening my understanding of isolating changes for better project history and easier management.
+The Final Results highlight the enhanced functionality through feature additions, demonstrating how version control principles apply in real-world development. The use of GitHub issues helped track and manage problems, providing a clear history of solutions.
+Exploring Fossil as an alternative to Git offered insights into different version control models. Comparing Fossil's centralized approach with Git's distributed system broadened my perspective on how version control can be tailored to fit project needs.
+This assignment enhanced my technical skills with Git and Fossil while emphasizing the role of version control in collaborative development, code integrity, and project management.
