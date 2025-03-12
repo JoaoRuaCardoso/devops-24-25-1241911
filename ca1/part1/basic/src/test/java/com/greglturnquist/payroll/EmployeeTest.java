@@ -61,7 +61,11 @@ class EmployeeTest {
         //assert
         assertNotNull(employee);
     }
-
+    @Test
+    void shouldCreateAnExceptionWhenEmailHasNoAtSym() throws Exception{
+        //assert
+        assertThrows(Exception.class, () -> new Employee("Joseph","Green","CEO",1,"jggmail.com"));
+    }
     @Test
     void shouldCreateAnExceptionWhenEmailIsNull() throws Exception{
         //assert

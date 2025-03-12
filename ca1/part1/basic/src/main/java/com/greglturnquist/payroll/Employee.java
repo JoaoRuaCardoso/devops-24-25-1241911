@@ -59,7 +59,7 @@ public class Employee {
 		return true;
 	}
 	private boolean isEmailValid(String email) {
-		return email != null;
+		return email != null && email.contains("@");
 	}
 
 	@Override
