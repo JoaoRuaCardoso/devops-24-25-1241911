@@ -7,7 +7,7 @@ class EmployeeTest {
     @Test
     void shouldCreateEmployee() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
         //assert
         assertNotNull(employee);
     }
@@ -22,51 +22,57 @@ class EmployeeTest {
     @Test
     void shouldCreateAnExceptionWhenFirstNameIsNull(){
         //assert
-        assertThrows(Exception.class, () -> new Employee(null,"Green","CEO",10));
+        assertThrows(Exception.class, () -> new Employee(null,"Green","CEO",10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenFirstNameIsEmpty(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("","Green","CEO",10));
+        assertThrows(Exception.class, () -> new Employee("","Green","CEO",10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenLastNameIsNull(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("Joseph",null,"CEO",10));
+        assertThrows(Exception.class, () -> new Employee("Joseph",null,"CEO",10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenLastNameIsEmpty(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("Joseph","","CEO",10));
+        assertThrows(Exception.class, () -> new Employee("Joseph","","CEO",10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenDescriptionIsNull(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("Joseph","Green",null,10));
+        assertThrows(Exception.class, () -> new Employee("Joseph","Green",null,10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenDescriptionIsEmpty(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("Joseph","Green","",10));
+        assertThrows(Exception.class, () -> new Employee("Joseph","Green","",10,"jg@gmail.com"));
     }
     @Test
     void shouldCreateAnExceptionWhenJobYearsIsNegative(){
         //assert
-        assertThrows(Exception.class, () -> new Employee("Joseph","Green","",-1));
+        assertThrows(Exception.class, () -> new Employee("Joseph","Green","CEO",-1,"jg@gmail.com"));
     }
     @Test
     void shouldCreateEmployeeWhenJobYearsEqualToZero() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",0);
+        Employee employee = new Employee("Joseph","Green","CEO",0,"jg@gmail.com");
         //assert
         assertNotNull(employee);
+    }
+
+    @Test
+    void shouldCreateAnExceptionWhenEmailIsNull() throws Exception{
+        //assert
+        assertThrows(Exception.class, () -> new Employee("Joseph","Green","CEO",1,null));
     }
 
     //equals
     @Test
     void shouldReturnTrueWhenObjectsAreInSameLocation() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
         Employee employee1 = employee;
         //act
         boolean result = employee.equals(employee1);
@@ -76,7 +82,7 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsAreFromDifferentInstances() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
         Object o = new Object();
         //act
         boolean result = employee.equals(o);
@@ -86,7 +92,7 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsToCompareIsNull() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
         Employee employee1 = null;
         //act
         boolean result = employee.equals(employee1);
@@ -96,8 +102,8 @@ class EmployeeTest {
     @Test
     void shouldReturnTrueWhenObjectsHaveSameContent() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
-        Employee employee1 = new Employee("Joseph","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -106,8 +112,8 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsHaveDifferentFirstNames() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
-        Employee employee1 = new Employee("Josephs","Green","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Josephs","Green","CEO",10,"jg@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -116,8 +122,8 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsHaveDifferentLastNames() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
-        Employee employee1 = new Employee("Joseph","Greens","CEO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph","Greens","CEO",10,"jg@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -126,8 +132,8 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsHaveDifferentDescriptions() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
-        Employee employee1 = new Employee("Joseph","Green","CFO",10);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph","Green","CFO",10,"jg@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -136,8 +142,8 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsHaveDifferentJobYears() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph","Green","CEO",10);
-        Employee employee1 = new Employee("Joseph","Greens","CEO",11);
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph","Greens","CEO",11,"jg@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -146,10 +152,20 @@ class EmployeeTest {
     @Test
     void shouldReturnFalseWhenObjectsHaveDifferentId() throws Exception {
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
-        Employee employee1 = new Employee("Joseph", "Greens", "CEO", 11);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph", "Greens", "CEO", 10,"jg@gmail.com");
         employee.setId(1L);
         employee1.setId(2L);
+        //act
+        boolean result = employee.equals(employee1);
+        //assert
+        assertFalse(result);
+    }
+    @Test
+    void shouldReturnFalseWhenObjectsHaveDifferentEmail() throws Exception{
+        //arrange
+        Employee employee = new Employee("Joseph","Green","CEO",10,"jg@gmail.com");
+        Employee employee1 = new Employee("Joseph","Green","CEO",11,"jog@gmail.com");
         //act
         boolean result = employee.equals(employee1);
         //assert
@@ -161,7 +177,7 @@ class EmployeeTest {
     void shouldReturnTheSameForTheSameObject() throws Exception{
         //arrange
         int loc = 10;
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         int hash1 = employee.hashCode();
         int hash2 = employee.hashCode();
@@ -172,8 +188,8 @@ class EmployeeTest {
     void shouldReturnDifferentForTheDifferentObject() throws Exception{
         //arrange
         int loc = 10;
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
-        Employee employee1 = new Employee("Josephs", "Greens", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
+        Employee employee1 = new Employee("Josephs", "Greens", "CEO", 10,"jg@gmail.com");
         //act
         int hash1 = employee.hashCode();
         int hash2 = employee1.hashCode();
@@ -186,7 +202,7 @@ class EmployeeTest {
     @Test
     void shouldReturnID() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         employee.setId(1L);
         //act
         Long result = employee.getId();
@@ -196,7 +212,7 @@ class EmployeeTest {
     @Test
     void shouldReturnFirstName() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         String result = employee.getFirstName();
         //assert
@@ -205,7 +221,7 @@ class EmployeeTest {
     @Test
     void shouldReturnLastName() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         String result = employee.getLastName();
         //assert
@@ -214,7 +230,7 @@ class EmployeeTest {
     @Test
     void shouldReturnDescription() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         String result = employee.getDescription();
         //assert
@@ -223,17 +239,26 @@ class EmployeeTest {
     @Test
     void shouldReturnJobYears() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         int result = employee.getJobYears();
         //assert
         assertEquals(10,result);
     }
+    @Test
+    void shouldReturnEmail() throws Exception{
+        //arrange
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
+        //act
+        String result = employee.getEmail();
+        //assert
+        assertEquals("jg@gmail.com",result);
+    }
     //set
     @Test
     void shouldReturnSetFirstName() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         employee.setFirstName("Alfred");
         //assert
@@ -242,7 +267,7 @@ class EmployeeTest {
     @Test
     void shouldReturnSetLastName() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         employee.setLastName("Blue");
         //assert
@@ -251,7 +276,7 @@ class EmployeeTest {
     @Test
     void shouldReturnSetDescription() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         employee.setDescription("CFO");
         //assert
@@ -260,29 +285,39 @@ class EmployeeTest {
     @Test
     void shouldReturnSetJobYears() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
         //act
         employee.setJobYears(9);
         //assert
         assertEquals(9,employee.getJobYears());
+    }
+    @Test
+    void shouldReturnSetEmail() throws Exception{
+        //arrange
+        Employee employee = new Employee("Joseph", "Green", "CEO", 10,"jg@gmail.com");
+        //act
+        employee.setEmail("gj@gmail.com");
+        //assert
+        assertEquals("gj@gmail.com",employee.getEmail());
     }
     //toString
 
     @Test
     void shouldReturnResult() throws Exception{
         //arrange
-        Employee employee = new Employee("Joseph", "Green", "CEO", 10);
+        Employee employee = new Employee("Jose", "Verde", "CEO", 10,"JG@gmail.com");
         employee.setId(1L);
         String expected = "Employee{" +
                 "id=1" +
-                ", firstName='Joseph'" +
-                ", lastName='Green'" +
+                ", firstName='Jose'" +
+                ", lastName='Verde'" +
                 ", description='CEO'" +
-                ", jobYears='10'}";
+                ", jobYears='10'" +
+                ", email='JG@gmail.com'}";
         //act
         String result = employee.toString();
         //assert
         assertEquals(expected,result);
     }
-  
+
 }
