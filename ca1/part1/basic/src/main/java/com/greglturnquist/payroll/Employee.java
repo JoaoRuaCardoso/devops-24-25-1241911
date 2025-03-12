@@ -33,10 +33,12 @@ public class Employee {
 	private String lastName;
 	private String description;
 	private int jobYears;
+	private String email;
+
 
 	public Employee() {}
 
-	public Employee(String firstName, String lastName, String description, int jobYears) throws Exception {
+	public Employee(String firstName, String lastName, String description, int jobYears, String email) throws Exception {
 		if(!isNameValid(firstName)) throw new Exception("First name cannot be empty");
 		this.firstName = firstName;
 		if(!isNameValid(lastName)) throw new Exception("Last name cannot be empty");
@@ -45,6 +47,8 @@ public class Employee {
 		this.description = description;
 		if(!isJobYearsValid(jobYears)) throw new Exception("Job Years cannot be negative");
 		this.jobYears = jobYears;
+		if(!isEmailValid(email)) throw new Exception("Invalid Parameter");
+		this.email = email;
 	}
 	private boolean isNameValid(String text){
 		if (text == null || text.isBlank()) return false;
@@ -54,6 +58,9 @@ public class Employee {
 		if (years < 0) return false;
 		return true;
 	}
+	private boolean isEmailValid(String email) {
+		return email != null;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -61,15 +68,17 @@ public class Employee {
 		if (o == null || getClass() != o.getClass()) return false;
 		Employee employee = (Employee) o;
 		return Objects.equals(id, employee.id) &&
-			Objects.equals(firstName, employee.firstName) &&
-			Objects.equals(lastName, employee.lastName) &&
-			Objects.equals(description, employee.description);
+				Objects.equals(firstName, employee.firstName) &&
+				Objects.equals(lastName, employee.lastName) &&
+				Objects.equals(description, employee.description)&&
+				Objects.equals(jobYears,employee.jobYears)&&
+				Objects.equals(email,employee.email);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, firstName, lastName, description);
+		return Objects.hash(id, firstName, lastName, description, jobYears, email);
 	}
 
 	public Long getId() {
@@ -108,6 +117,10 @@ public class Employee {
 
 	public void setJobYears(int jobYears){this.jobYears = jobYears;}
 
+	public String getEmail() {return email;}
+
+	public void setEmail(String email) {this.email = email;}
+
 	@Override
 	public String toString() {
 		return "Employee{" +
@@ -116,6 +129,7 @@ public class Employee {
 				", lastName='" + lastName + '\'' +
 				", description='" + description + '\'' +
 				", jobYears='" + jobYears + '\'' +
+				", email='" + email + '\''+
 				'}';
 	}
 }
