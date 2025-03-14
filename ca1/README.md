@@ -11,29 +11,41 @@
 **Institution:** Instituto Superior de Engenharia do Porto
 
 ## Table of Contents
+- [Part 1: Version Control with Git](#part-1-version-control-with-git)  
+  - [Introduction Part 1](#introduction-part-1)
+  - [Environment Setup Part1](#environment-setup-part-1)
+  - [Part 1.1: Development Without Branches](#part-11-development-without-branches)
+    - [Goals and Requirements](#goals-and-requirements)
+    - [Key Developments](#key-developments)
+  - [Part 1.2: Development Using Branches](#part-12-development-using-branches)
+    - [Goals and Requirements](#goals-and-requirements-1)
+    - [Key Developments](#key-developments)
+  - [Final Results](#final-results)
+    - [Implementation](#implementation)
+    - [Branches](#branches)
+    - [Tags](#tags)
+    - [Issue Tracking](#issue-tracking)
+  - [Alternative Solution](#alternative-solution)
+    - [Comparison of Fossil and Git](#comparison-of-fossil-and-git)
+    - [Utilizing Fossil for the Assignment](#utilizing-fossil-for-the-assignment)
+  - [Conclusion Part 1](#conclusion-part-1)
+- [Part 2: Build Tools with Gradle](#part-2-build-tools-with-gradle)
+  - [Introduction Part 2](#introduction-part-2)
+  - [Environment Setup Part 2](#environment-setup-part-2)
+  - [Gradle Basic Demo](#gradle-basic-demo)
+  - [Add a new task](#add-a-new-task)
+  - [Add a unit test](#add-a-unit-test)
+  - [Add a new task of type Copy](#add-a-new-task-of-type-copy)
+  - [Add a new task of type Zip](#add-a-new-task-of-type-zip)
+  - [Conclusion Part 2](#conclusion-part-2)
 
-- [Introduction](#introduction)
-- [Environment Setup](#environment-setup)
-- [Part 1: Development Without Branches](#part-1-development-without-branches)
-  - [Goals and Requirements](#goals-and-requirements)
-  - [Key Developments](#key-developments)
-- [Part 2: Development Using Branches](#part-2-development-using-branches)
-  - [Goals and Requirements](#goals-and-requirements-1)
-  - [Key Developments](#key-developments-1)
-- [Final Results](#final-results)
-  - [Implementation](#implementation)
-  - [Branches](#branches)
-  - [Tags](#tags)
-  - [Issue Tracking](#issue-tracking)
-- [Alternative Solution](#alternative-solution)
-  - [Comparison of Fossil and Git](#comparison-of-svn-and-git)
-  - [Utilizing Fossil for the Assignment](#utilizing-Fossil-for-the-assignment)
-- [Conclusion](#conclusion)
 
-## Introduction
+## Part 1 Version Control With Git
+
+## Introduction Part 1
 This report covers the Version Control with Git assignment for the DevOps course. The assignment consists of two sections: Part 1, which focuses on basic version control without branches, and Part 2, which introduces branching for feature development and bug fixes.
 
-## Environment Setup
+## Environment Setup Part 1
 First, I created a local copy of the Tutorial React.js and Spring Data REST application by cloning an existing repository. After that, I set up my own repository to manage the class assignments, ensuring that all progress and modifications were properly tracked using version control.
 
 ** Creating My Repository:** Created new folders on my local machine, .gitignore and Readme. Initialized it as a Git repository.
@@ -58,7 +70,7 @@ git commit -m "added README and .gitignore"
 git push -u origin master
 ```
 
-## Part 1: Development Without Branches
+## Part 1.1: Development Without Branches
 
 ### Goals and Requirements
 -   The initial part of the assignment focuses on understanding and utilizing basic version control operations without branching.
@@ -66,7 +78,7 @@ git push -u origin master
 -   A key requirement is to introduce a new feature (e.g., adding a `jobYears` field to an Employee object) and ensuring proper version tagging, starting with an initial version and updating it after adding the new feature.
 -   The emphasis is on practicing commits, understanding the commit history, and using tags for versioning.
 
-### Key Developments
+### Key Developments 
 In the first part, all development was done in the master branch. The steps included:
 
 1. **Copy the code of the Tutorial React.js and Spring Data REST Application into  `CA1`.**
@@ -480,7 +492,7 @@ After verifying the `jobYears` field's integration, I ran the application using 
 Once satisfied with the stability and performance of the new feature, I committed the changes to the repository with a descriptive message outlining the enhancements. Following this, the updated code was pushed to the remote server to share the advancements with the team and maintain the project's collaborative workflow. To mark this significant update, I tagged the commit with `v1.2.0`, following the semantic versioning pattern adopted for the project.
 Create tag ca1-part1.1 as result of the end of the first assignment.
 
-## Part 2: Development Using Branches
+## Part 1.2: Development Using Branches
 
 ### Goals and Requirements
 
@@ -642,9 +654,151 @@ fossil merge new-feature
 fossil commit -m "Merged feature branch into trunk"
 
 ```
-## Conclusion
+## Conclusion Part 1
 
 Completing the Version Control with Git assignment expanded my understanding of version control systems in software development. Part 1 focused on basic Git concepts, such as modifying the master branch and committing/tagging changes. Part 2 introduced branching, deepening my understanding of isolating changes for better project history and easier management.
 The Final Results highlight the enhanced functionality through feature additions, demonstrating how version control principles apply in real-world development. The use of GitHub issues helped track and manage problems, providing a clear history of solutions.
 Exploring Fossil as an alternative to Git offered insights into different version control models. Comparing Fossil's centralized approach with Git's distributed system broadened my perspective on how version control can be tailored to fit project needs.
 This assignment enhanced my technical skills with Git and Fossil while emphasizing the role of version control in collaborative development, code integrity, and project management.
+
+# Part 2 Build Tools With Gradle
+
+## Introduction Part 2
+
+This report summarizes the Build Tools with Gradle assignment for the DevOps course, covering key Gradle applications. It progresses from setup to advanced tasks like custom task creation and unit testing.
+
+After the Environment Setup, the Gradle Basic Demo section presents a multithreaded chat server, illustrating how Gradle manages builds and execution.
+
+The Add a New Task section details extending Gradle’s functionality, while Add a Unit Test emphasizes integrating tests for project reliability. Lastly, Add a Copy Task and Add a Zip Task demonstrate Gradle’s role in file handling for project distribution.
+
+The report concludes by summarizing the learning outcomes, challenges faced, and practical skills gained in using Gradle for software development.
+
+## Environment Setup Part 2
+
+The setup began by creating a new directory, /CA2/Part1, and cloning the example application from the provided Bitbucket repository. This repository included a build.gradle file and the Gradle Wrapper, ensuring a consistent environment.
+
+After installing Gradle, I verified the setup by running gradle -v. I then imported the project into my Gradle-supported IDE, leveraging its built-in tools. To confirm the configuration, I executed a basic Gradle build, ensuring all components were correctly set up.
+
+These steps provided a solid foundation for the subsequent tasks in the assignment.
+
+## Gradle Basic Demo 
+
+The Gradle Basic Demo was a hands-on exercise in managing a multithreaded chat server capable of handling multiple clients simultaneously.
+
+**Gradle Build Process:**
+
+To set up the demo, I ran `./gradlew` build in the project's root directory. This command compiled the code and generated an executable .jar file. The screenshot below verifies the successful build.
+
+
+[![image.png](https://i.postimg.cc/QMf3Dv4h/image.png)](https://postimg.cc/gwL5qtbT)
+
+**Server Launch:**
+
+Following that, I launched the chat server using the command java `-cp build/libs/basic_demo-0.1.0.jar basic_demo.ChatServerApp 59001`. The screenshot below shows the server running and awaiting client connections.
+
+[![image.png](https://i.postimg.cc/3JnrYLL8/image.png)](https://postimg.cc/MvfJYY2N)
+
+[![image.png](https://i.postimg.cc/kGNQ2r2h/image.png)](https://postimg.cc/m1Dzn5NQ)
+
+For the client side, I established connections to the chat server by executing `/gradlew runClient`, ensuring each client connected to localhost on port 59001. The build.gradle file was configured to allow easy modifications for different connection settings. To demonstrate the server's capability to manage multiple clients, I launched several client instances from different terminals. The screenshots below show the active chat sessions, highlighting the multi-client functionality in action.
+
+[![image.png](https://i.postimg.cc/wj5DFYFq/image.png)](https://postimg.cc/ZWR9Kg12)
+
+## Adding a runServer Task for Simplified Server Startup
+
+I added a `runServer` task to the `build.gradle` file to streamline the server startup process. This task allows us to launch the chat server directly using a Gradle command, eliminating the need for manual inputs.
+
+The `runServer` task is defined as follows in the `build.gradle` file, with the type set to JavaExec to execute Java applications. It depends on the classes task to ensure the necessary classes are compiled before starting the server, and it launches the ChatServerApp on port 59001:
+
+```java
+
+tasks.register('runServer', JavaExec){
+    group = "DevOps"
+    description = "Launches a chat Server"
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    mainClass = "basic_demo.ChatServerApp"
+    args '59001'
+}
+```
+I tested this task by running `./gradlew runServer` from the command line, and the terminal feedback confirmed the server was successfully launched, as shown in the screenshot below.
+
+[![image.png](https://i.postimg.cc/YCQ3vyPF/image.png)](https://postimg.cc/w1TJPFgx)
+
+This integration into our Gradle build script showcases Gradle's flexibility and enhances productivity by automating routine tasks.
+
+## Add a unit test
+
+I added a unit test to verify the App class’s functionality. The test, located in `src/test/java/basic_demo/AppTest.java`, checks if the App class returns a non-null greeting message.
+
+To set up the test environment, I included the JUnit dependency in the `build.gradle` file:
+
+```java
+testImplementation 'junit:junit:4.12'
+```
+This ensures that the project can recognize and run JUnit tests smoothly. Below is the content of AppTest.java, which contains the test case:
+
+```java
+package basic_demo;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class AppTest {
+  @Test public void testAppHasAGreeting() {
+    App classUnderTest = new App();
+    assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+  }
+}
+```
+I executed the test using the command `./gradlew test`. The screenshot below shows the terminal output, confirming the test passed successfully.
+
+[![image.png](https://i.postimg.cc/bwj69244/image.png)](https://postimg.cc/zV0SJ3zk)
+
+## Add a new task of type Copy
+
+The next task involved adding a `Copy` task to the `build.gradle` file, designed to create a backup of the source code. This ensures a reliable recovery point in case of unforeseen issues during development.
+
+The backup task uses Gradle's Copy task type to replicate the contents of the `src` directory into a designated backup location within the project. This step is crucial for maintaining an up-to-date snapshot of the codebase, especially before significant changes or updates:
+
+```java
+task backup(type: Copy) {
+  group = "DevOps"
+  description = "Make a backup of the sources of the Application"
+
+  from 'src'
+  into 'backup'
+}
+```
+After implementing the task, I tested its functionality by running `./gradlew backup` from the command line. The task executed successfully, as shown in the terminal output below, confirming that the source code was copied to the backup location and ensuring the task's effectiveness in safeguarding the project’s code.
+
+[![image.png](https://i.postimg.cc/J0MNBbsQ/image.png)](https://postimg.cc/8JXJ2fBF)
+
+## Add a new task of type Zip
+
+The final task involved creating a Zip task to package the project's source code into a compressed .zip file. This task simplifies packaging the src directory, making it easier for backups or distribution. It’s essential for archiving project iterations or preparing the code for sharing.
+
+Below is the task definition:
+
+```java
+task zipSource(type: Zip) {
+group = "DevOps"
+description = "Zips the source code files"
+
+    from 'src'
+    archiveFileName = 'src_archive.zip'
+    destinationDir = file('archives')
+}
+```
+After defining the zip task, I executed it with ./gradlew zip. The terminal output confirmed the successful execution, indicating that the src directory was compressed into a ZIP archive. Below is a screenshot of the terminal showing the successful archive creation.
+
+[![image.png](https://i.postimg.cc/KjmZSYWz/image.png)](https://postimg.cc/HcPGbTdD)
+
+## Conclusion Part 2
+
+This assignment provided valuable insights into Gradle's practical applications as a build tool. The tasks performed demonstrated its adaptability and versatility in automating build processes, integrating unit tests, and executing file manipulation tasks, all essential for an efficient development workflow.
+
+Adding tasks like `runServer`, `backup`, and `zipSource` showcased Gradle’s extensibility, streamlining the development process and enhancing the project's resilience and distribution capabilities. Integrating unit tests further highlighted the importance of testing in software development and how Gradle supports this.
+
+Overall, this experience has deepened my understanding of Gradle and its role in software development, equipping me with knowledge to improve future projects through more efficient and reliable workflows
