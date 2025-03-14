@@ -589,7 +589,7 @@ Issues serve multiple purposes in a project, such as tracking bugs, feature requ
 ## Alternative Solution
 In seeking an alternative to Git for version control, Fossil offers a distinct approach with its centralized model, contrasting Git's decentralized nature. This section compares SVN to Git in terms of version control features and describes how SVN could be utilized to achieve the goals set forth in this assignment.
 
-### Comparison of SVN and Git
+### Comparison of Fossil and Git
 
 # Fossil vs. Git Comparison
 

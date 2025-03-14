@@ -57,3 +57,14 @@ task runClient(type:JavaExec, dependsOn: classes){
 
     args 'localhost', '59001'
 }
+
+tasks.register('runServer', JavaExec){
+    group = "DevOps"
+
+    description = "Launches a chat Server"
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    mainClass = "basic_demo.ChatServerApp"
+    args '59001'
+}
