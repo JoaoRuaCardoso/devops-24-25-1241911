@@ -70,3 +70,13 @@ tasks.register('runServer', JavaExec){
     mainClass = "basic_demo.ChatServerApp"
     args '59001'
 }
+
+task backup(type: Copy) {
+    group = "DevOps"
+
+    description = "Make a backup of the sources of the Application"
+
+    from 'src'
+    into 'backup'
+}
+
