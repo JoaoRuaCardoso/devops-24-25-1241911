@@ -62,7 +62,6 @@ task runClient(type:JavaExec, dependsOn: classes){
 
 tasks.register('runServer', JavaExec){
     group = "DevOps"
-
     description = "Launches a chat Server"
 
     classpath = sourceSets.main.runtimeClasspath
@@ -73,10 +72,19 @@ tasks.register('runServer', JavaExec){
 
 task backup(type: Copy) {
     group = "DevOps"
-
     description = "Make a backup of the sources of the Application"
 
     from 'src'
     into 'backup'
 }
+
+task zipSource(type: Zip) {
+    group = "DevOps"
+    description = "Zips the source code files"
+
+    from 'src'
+    archiveFileName = 'src_archive.zip'
+    destinationDir = file('archives')
+}
+
 
