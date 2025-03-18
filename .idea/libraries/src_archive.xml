@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="src_archive">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ca1/part2/gradle_basic_demo/archives/src_archive.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

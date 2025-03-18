@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gradle-wrapper2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ca1/part2/gradle_basic_demo/gradle/wrapper/gradle-wrapper.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

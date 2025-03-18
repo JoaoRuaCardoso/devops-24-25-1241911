@@ -33,7 +33,7 @@
   - [Introduction Part 2](#introduction-part-2)
   - [Environment Setup Part 2](#environment-setup-part-2)
   - [Gradle Basic Demo](#gradle-basic-demo)
-  - [Add a new task](#add-a-new-task)
+  - [Adding a runServer Task for Simplified Server Startup](#adding-a-runserver-task-for-simplified-server-startup)
   - [Add a unit test](#add-a-unit-test)
   - [Add a new task of type Copy](#add-a-new-task-of-type-copy)
   - [Add a new task of type Zip](#add-a-new-task-of-type-zip)
