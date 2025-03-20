@@ -1,4 +1,4 @@
-# CA1: Version Control with Git: Technical Report
+# CA1
 
 **Author:** João Cardoso
 
@@ -38,6 +38,14 @@
   - [Add a new task of type Copy](#add-a-new-task-of-type-copy)
   - [Add a new task of type Zip](#add-a-new-task-of-type-zip)
   - [Conclusion Part 2](#conclusion-part-2)
+- [Part 3: Build Tools with Gradle](#part-3-build-tools-with-gradle)
+  - [Introduction Part 3](#introduction-part-3)
+  - [Setup Initial Gradle Project](#setup-initial-gradle-project)
+  - [Configure Frontend Plugin for Gradle](#configure-frontend-plugin-for-gradle)
+  - [Add Gradle Tasks for File Management](#add-gradle-tasks-for-file-management)
+  - [Alternative Solution to Gradle](#alternative-solution-to-gradle)
+  - [Conclusion Part 3](#conclusion-part-3)
+
 
 
 ## Part 1 Version Control With Git
@@ -571,7 +579,7 @@ Bellow follows all the new features, the final state of the application is illus
 
 [![image.png](https://i.postimg.cc/N0DkdGJP/image.png)](https://postimg.cc/9449M2jG)
 
-The initial model included First Name, Last Name, and Description. Development began with Job Title, followed by Job Years in Part 1 of CA1 to track tenure. In Part 2 of CA1, the Email field was added for contact information.
+The initial model included First Name, Last Name, and Description. Development began with Job Years in Part 1 of CA1 to track tenure. In Part 2 of CA1, the Email field was added for contact information.
 
 ### Branches
 The image below reveals the existing branches in the repository, as output by the `git branch` command.
@@ -675,13 +683,13 @@ The report concludes by summarizing the learning outcomes, challenges faced, and
 
 ## Environment Setup Part 2
 
-The setup began by creating a new directory, /CA2/Part1, and cloning the example application from the provided Bitbucket repository. This repository included a build.gradle file and the Gradle Wrapper, ensuring a consistent environment.
+The setup began by creating a new directory, /CA1/Part2, and cloning the example application from the provided Bitbucket repository. This repository included a build.gradle file and the Gradle Wrapper, ensuring a consistent environment.
 
 After installing Gradle, I verified the setup by running gradle -v. I then imported the project into my Gradle-supported IDE, leveraging its built-in tools. To confirm the configuration, I executed a basic Gradle build, ensuring all components were correctly set up.
 
 These steps provided a solid foundation for the subsequent tasks in the assignment.
 
-## Gradle Basic Demo 
+## Gradle Basic Demo
 
 The Gradle Basic Demo was a hands-on exercise in managing a multithreaded chat server capable of handling multiple clients simultaneously.
 
@@ -802,3 +810,380 @@ This assignment provided valuable insights into Gradle's practical applications 
 Adding tasks like `runServer`, `backup`, and `zipSource` showcased Gradle’s extensibility, streamlining the development process and enhancing the project's resilience and distribution capabilities. Integrating unit tests further highlighted the importance of testing in software development and how Gradle supports this.
 
 Overall, this experience has deepened my understanding of Gradle and its role in software development, equipping me with knowledge to improve future projects through more efficient and reliable workflows
+
+# Part 3 Build Tools With Gradle
+
+## Introduction Part 3
+
+This report summarizes the tasks completed in the third  part of Class Assignment 1 for the DevOps course, focusing on using Gradle for build automation. The assignment guides the migration of a Spring Boot application from Maven to Gradle, emphasizing its practical benefits in software development.
+
+## Setup Initial Gradle Project
+
+Setting up the Gradle project required key steps to transition from a Maven-based structure. First, a new branch was created to isolate and manage changes effectively using the command:
+
+```bash
+git checkout -b tut-basic-gradle
+```
+Next, a new Spring Boot project was initialized using Spring Initializr at start.spring.io, configured with essential dependencies like Rest Repositories, Thymeleaf, JPA, and H2.
+
+The generated .zip file was downloaded and extracted into CA1/Part3/, providing the foundation for a Gradle-managed Spring application.
+
+To confirm the setup and list available Gradle tasks, the following command was run in the project’s root directory:
+
+```bash
+./gradlew tasks
+```
+Executing this command the return outputs the list of tasks available as shown bellow :
+
+```bash
+$ ./gradlew tasks
+Downloading https://services.gradle.org/distributions/gradle-8.13-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.13!
+
+Here are the highlights of this release:
+ - Daemon JVM auto-provisioning
+ - Enhancements for Scala plugin and JUnit testing
+ - Improvements for build authors and plugin developers
+
+For more details see https://docs.gradle.org/8.13/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Task :tasks
+
+------------------------------------------------------------
+Tasks runnable from root project 'react-and-spring-data-rest-basic'
+------------------------------------------------------------
+
+Application tasks
+-----------------
+bootRun - Runs this project as a Spring Boot application.
+bootTestRun - Runs this project as a Spring Boot application using the test runtime classpath.
+
+Build tasks
+-----------
+assemble - Assembles the outputs of this project.
+bootBuildImage - Builds an OCI image of the application using the output of the bootJar task
+bootJar - Assembles an executable jar archive containing the main classes and their dependencies.
+build - Assembles and tests this project.
+buildDependents - Assembles and tests this project and all projects that depend on it.
+buildNeeded - Assembles and tests this project and all projects it depends on.
+classes - Assembles main classes.
+clean - Deletes the build directory.
+jar - Assembles a jar archive containing the classes of the 'main' feature.
+resolveMainClassName - Resolves the name of the application's main class.
+resolveTestMainClassName - Resolves the name of the application's test main class.
+testClasses - Assembles test classes.
+
+Build Setup tasks
+-----------------
+init - Initializes a new Gradle build.
+updateDaemonJvm - Generates or updates the Gradle Daemon JVM criteria.
+wrapper - Generates Gradle wrapper files.
+
+Documentation tasks
+-------------------
+javadoc - Generates Javadoc API documentation for the 'main' feature.
+
+Help tasks
+----------
+artifactTransforms - Displays the Artifact Transforms that can be executed in root project 'react-and-spring-data-rest-basic'.
+buildEnvironment - Displays all buildscript dependencies declared in root project 'react-and-spring-data-rest-basic'.
+dependencies - Displays all dependencies declared in root project 'react-and-spring-data-rest-basic'.
+dependencyInsight - Displays the insight into a specific dependency in root project 'react-and-spring-data-rest-basic'.
+dependencyManagement - Displays the dependency management declared in root project 'react-and-spring-data-rest-basic'.
+help - Displays a help message.
+javaToolchains - Displays the detected java toolchains.
+outgoingVariants - Displays the outgoing variants of root project 'react-and-spring-data-rest-basic'.
+projects - Displays the sub-projects of root project 'react-and-spring-data-rest-basic'.
+properties - Displays the properties of root project 'react-and-spring-data-rest-basic'.
+resolvableConfigurations - Displays the configurations that can be resolved in root project 'react-and-spring-data-rest-basic'.
+tasks - Displays the tasks runnable from root project 'react-and-spring-data-rest-basic'.
+
+Verification tasks
+------------------
+check - Runs all checks.
+test - Runs the test suite.
+
+Rules
+-----
+Pattern: clean<TaskName>: Cleans the output files of a task.
+Pattern: build<ConfigurationName>: Assembles the artifacts of a configuration.
+
+To see all tasks and more detail, run gradlew tasks --all
+
+To see more detail about a task, run gradlew help --task <task>
+
+BUILD SUCCESSFUL in 26s
+1 actionable task: 1 executed
+
+```
+The output verified the successful creation of tasks for building and running the application. This list highlighted Gradle’s capabilities, laying the groundwork for further customization and development in the next steps.
+
+## Integrate Existing Code
+
+At this stage, the existing codebase from a basic tutorial was incorporated into the Gradle project. The process was carefully executed to ensure all components functioned correctly under the new build system.
+
+The integration followed these steps:
+
+This phase involved integrating the existing tutorial codebase into the Gradle project while ensuring all components functioned correctly under the new build system.
+
+Integration Steps:
+- **Replace the Source Directory**: The original src folder was removed, and the tutorial’s src directory was copied into the Gradle project.
+- **Include Additional Configuration Files**: webpack.config.js and package.json were added to maintain frontend build settings.
+- **Remove Redundant Directories**: src/main/resources/static/built was deleted since Webpack regenerates it during the build process.
+
+Fixing Compilation Errors:
+- **Update Import Statements**: javax.persistence imports in Employee.java were replaced with jakarta.persistence to align with newer dependencies.
+- **Set Package Manager Version**: "packageManager": "npm@9.6.7" was added to package.json for consistency across environments.
+
+After completing the integration and configuration changes, the application underwent testing to verify its functionality and stability. The following steps were taken to ensure everything worked as expected:
+
+- **Testing the Integration**:
+Run the Backend: `./gradlew bootRun` was executed to start the application.
+Check Frontend Behavior: Accessing http://localhost:8080 displayed an empty page, expected due to a missing Gradle plugin for frontend handling, which will be addressed later.
+This integration established a solid foundation for further enhancements and feature additions in the Gradle-based project.
+
+## Configure Frontend Plugin for Gradle
+
+To align the build processes of the frontend with the newly adopted Gradle system, the `org.siouan.frontend-gradle-plugin` was introduced. This plugin is crucial for managing frontend assets, similar to how the `frontend-maven-plugin` is used in Maven projects.
+
+- **Adding the Plugin**: The Gradle build script was updated to include the org.siouan.frontend plugin, compatible with Java 17. The following line was added to the plugins block in build.gradle:
+```groovy
+   id "org.siouan.frontend-jdk17" version "8.0.0"
+   ```
+- **Configuring the Plugin**: To properly manage frontend assets, configurations for the Node.js version and script commands were included in build.gradle. This setup defines the Node.js version in use and the scripts for building, cleaning, and verifying the frontend:
+ ```groovy
+    frontend {
+        nodeVersion = "16.20.2"
+        assembleScript = "run build"
+        cleanScript = "run clean"
+        checkScript = "run check"
+    }
+```
+- **Updating package.json**: The scripts section in package.json was updated to manage the execution of Webpack and other frontend-related tasks:
+    ```json
+    "scripts": {
+        "webpack": "webpack",
+        "build": "npm run webpack",
+        "check": "echo Checking frontend",
+        "clean": "echo Cleaning frontend",
+        "lint": "echo Linting frontend",
+        "test": "echo Testing frontend"
+    }
+    ```
+
+- **Testing the Configuration**: After setting up the frontend plugin, the build and runtime behaviors were tested:
+  - Build Test: Running `./gradlew build` confirmed that the project builds successfully with the frontend integration.  
+  - Application Execution: `./gradlew bootRun` was run, and the application was accessed at http://localhost:8080. Unlike before, the webpage now displayed frontend content, confirming that the Gradle plugin managed the frontend resources correctly during the build and serve processes.
+  - This setup showcases the successful integration of frontend build management into Gradle, improving the project's ability to handle full-stack development workflows efficiently.
+
+## Add Gradle Tasks for File Management
+To improve file management, particularly for distribution and cleanup, two custom Gradle tasks were defined: copyJar and cleanWebpack.
+
+1. **Task: `copyJar`**
+  - **Purpose**: This task is responsible for copying the `.jar` file generated by the `bootJar` task directly from the output directory to a `dist` folder at the project root. This approach ensures that only the correct, fully assembled `.jar` file is targeted for distribution, minimizing errors and ensuring that deployments contain the most current build.
+  - **Configuration**:
+    ```groovy
+    task copyJar(type: Copy) {
+        dependsOn bootJar
+        from bootJar.outputs
+        into file("dist")
+    }
+    ```  
+- **Dependencies**: It explicitly depends on the `bootJar` task, ensuring that the copy operation is executed only after the `bootJar` has successfully completed, thus maintaining a clear and reliable build dependency.
+
+2. **Task: `cleanWebpack`**
+  - **Purpose**: The task deletes all files generated by Webpack in the src/main/resources/static/built directory, keeping the build environment clean and ensuring only necessary files are included in each build, preventing conflicts from outdated files.
+  - **Configuration**:
+    ```groovy
+    task cleanWebpack(type: Delete) {
+        delete 'src/main/resources/static/built'
+    }
+    clean.dependsOn cleanWebpack
+    ```
+  - **Dependencies**: This task runs automatically before Gradle's standard clean task, integrating it into the regular cleanup process.
+
+Both tasks were run to confirm their functionality.
+
+- **Executing `copyJar`**:
+  - Command: `./gradlew copyJar`
+  - **Outcome**: The .jar file from the bootJar task was successfully copied to the dist directory, confirming the task's accuracy and integration into the build process for distribution.
+  - 
+- **Executing `cleanWebpack`**:
+  - Command: `./gradlew cleanWebpack`
+  - **Outcome**: The src/main/resources/static/built directory was successfully cleared, confirming the cleanup task's effectiveness in maintaining a clean build environment.
+These tasks were added to the build process to automate file management, improving efficiency and reliability. Each executed correctly, ensuring smoother project maintenance.
+
+## Alternative Solution to Gradle
+
+**Implementing the Assignment Goals with Maven**
+This guide outlines the steps required to configure Maven for a Spring Boot application, mirroring the setup and functionality achieved with Gradle. It includes frontend integration, custom build tasks, and file management. Below is a detailed step-by-step guide for setting up Maven, including the necessary pom.xml configurations.
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>spring-boot-app</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot Starters -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot Maven Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Frontend Maven Plugin -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.11.0</version>
+                <configuration>
+                    <nodeVersion>v16.20.2</nodeVersion>
+                    <workingDirectory>src/main/resources/static</workingDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Resources Plugin (Copy JAR Task) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dist</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Clean Plugin (Delete Webpack Files Task) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>delete-webpack-files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>src/main/resources/static/built</directory>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+**Comparison Between Maven and Gradle**
+
+| Feature                  | Maven                                                       | Gradle                                                      |
+|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------|
+| **Build Language**       | XML-based configuration.                                    | Uses Groovy or Kotlin DSL for configuration scripts.        |
+| **Performance**          | Generally slower due to its linear phase-dependent approach.| Faster, supports incremental builds and up-to-date checks.  |
+| **Flexibility**          | Less flexible, rigid lifecycle phases.                      | Highly customizable and flexible due to scripting support.  |
+| **Dependency Management**| Uses centralized repository system.                         | Offers powerful dependency management with dynamic versions.|
+| **Ease of Use**          | Simple to set up with standardized lifecycle phases.        | Steeper learning curve but more powerful due to flexibility.|
+| **Plugins**              | Wide range of available plugins but adding new plugins can be more complex.| Extensive plugin ecosystem; easier to write and apply custom plugins.|
+| **Community and Support**| Well-established, large community and lots of resources.    | Growing community, well-supported with ample documentation. |
+| **Use Case**             | Better suited for conventional Java projects.               | Ideal for multi-project builds and projects needing high customization.|
+
+Maven serves as a reliable alternative to Gradle for managing and building Spring Boot projects. 
+Through its detailed setup and configuration, Maven showcases strong capabilities in dependency management, build automation, and plugin integration. 
+Its structured approach, featuring a predictable build lifecycle and a rich plugin ecosystem, makes it ideal for projects requiring a standardized build process. 
+Although Maven may not match Gradle’s flexibility or performance optimizations—such as incremental builds and dynamic scripting—its simplicity and widespread adoption in the Java community ensure its relevance in many development scenarios.
+
+## Conclusion Part 3
+This report outlines the migration of a Spring Boot application from Maven to Gradle, emphasizing Gradle’s strengths in dependency management, frontend integration, and customizable build tasks. By comparing Maven and Gradle, we’ve highlighted their unique advantages: Maven’s structured, standardized approach and Gradle’s flexibility and scripting capabilities.
+This process has deepened my understanding of build automation tools and reinforced the importance of selecting the right tool based on project needs and team expertise. These insights will inform future decisions, ensuring efficient and effective project management.
+
+
+
+
+
+
+
+
