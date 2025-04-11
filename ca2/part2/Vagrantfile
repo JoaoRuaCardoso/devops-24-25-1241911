@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "db" do |db|
     db.vm.box = "ubuntu/bionic64"
     db.vm.hostname = "db"
-    db.vm.network "private_network", ip: "192.168.56.11"
+    db.vm.network "private_network", ip: "192.168.33.11"
 
     # We want to access H2 console from the host using port 8082
     # We want to connet to the H2 server using port 9092
@@ -51,9 +51,6 @@ Vagrant.configure("2") do |config|
         web.vm.provider "virtualbox" do |v|
           v.memory = 1024
         end
-
-        # Enable SSH agent forwarding (optional)
-        web.ssh.forward_agent = true
 
         # Provisioning script for the web VM
         web.vm.provision "shell", privileged: false, inline: <<-SHELL
