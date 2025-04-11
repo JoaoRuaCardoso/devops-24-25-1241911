@@ -46,6 +46,10 @@ Vagrant.configure("2") do |config|
         web.vm.network "forwarded_port", guest: 8080, host: 8080
         # Sync the host's SSH key folder into the VM (read-only)
         web.vm.synced_folder "~/.ssh", "/home/vagrant/.ssh_host", type: "virtualbox"
+        # We set more ram memmory for this VM
+            web.vm.provider "virtualbox" do |v|
+              v.memory=2048
+        end
 
         # Enable SSH agent forwarding (optional)
         web.ssh.forward_agent = true
