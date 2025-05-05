@@ -3,7 +3,7 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY ../gradle_basic_demo/build/libs/basic_demo-0.1.0.jar ./basic_demo-0.1.0.jar
+COPY ../../../../ca1/part2/gradle_basic_demo/build/libs/basic_demo-0.1.0.jar ./basic_demo-0.1.0.jar
 
 EXPOSE 59001
 
