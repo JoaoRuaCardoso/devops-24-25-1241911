@@ -1,4 +1,4 @@
-# CA2 Part1: Virtualization with Vagrant: Technical Report
+# CA2 : Virtualization with Vagrant: Technical Report
 
 **Author:** João Cardoso
 
@@ -31,8 +31,14 @@
   - [Running the Project](#running-the-project)
   - [Vagrant commands](#vagrant-commands)
   - [Alternative Solution](#alternative-solution)
-  - [Conclusion Part1](#conclusion-part1)
+  - [Conclusion Part2](#conclusion-part2)
 
+- Part 3 Contents:
+    - [Part3 Introduction](#part3-introduction)
+    - [Environment Setup Part3](#environment-setup-part3)
+    - [Dockerfile - version 1](#dockerfile---version-1)
+    - [Dockerfile - version 2](#dockerfile---version-2)
+    - [Conclusion Part3](#conclusion-part3)
 ## Part1 Introduction
 
 This report covers **Class Assignment 2 - Part 1**, focusing on virtualization with VirtualBox in the DevOps curriculum. 
@@ -532,12 +538,219 @@ It supports advanced features and delivers better performance, which can be espe
 This alternative aligns with the goal of improving our virtualization setup, ultimately enhancing the development experience 
 and facilitating smoother transitions to production-like environments.
 
-## Conclusion
+## Conclusion Part2
 
 This technical report documents the setup and execution of **Class Assignment 2 - Part 2**, focusing on virtualization with Vagrant. 
 By configuring the Vagrant environment, connecting the Spring Boot application to the H2 database, and running the project successfully,
 I have demonstrated the practical application of virtualization concepts in a real-world scenario. 
 Additionally, the alternative solution using VMware with Vagrant has been explored, emphasizing the differences between VMware and 
 VirtualBox and showcasing the benefits of using VMware for advanced virtualization needs.
+
+## Part3 Introduction
+
+This assignment focuses on Docker implementation for containerizing a chat application. The project builds upon the existing `CA1` codebase hosted in Bitbucket, with two distinct approaches to deployment:
+
+1. **Internal Build Method**: Compiling and packaging the application directly within the Dockerfile
+2. **External Build Method**: Building the application locally and importing the final JAR into the container
+
+Key aspects covered in this report include:
+- Development environment configuration
+- Dockerfile implementations for both approaches
+- Image creation and container execution processes
+
+Containerization ensures consistent behavior across different execution environments while demonstrating practical Docker skills.
+
+## Environment Setup Part3
+
+Before containerizing the `CA1` chat server, I configured the necessary components:
+
+### Prerequisites
+- Docker runtime installed and configured
+- Access to the Bitbucket repository containing the Gradle-based chat application
+
+### Repository Setup
+The project source was obtained by cloning the repository:
+
+```bash
+git clone https://bitbucket.org/pssmatos/gradle_basic_demo.git
+```
+
+## Dockerfile - Version 1
+
+### Implementation Steps
+
+1. **Docker Verification**  
+   Confirmed Docker service was active and running on the system.
+
+2. **Directory Preparation**  
+   Navigated to the project directory containing the Dockerfile.
+
+3. **Dockerfile Configuration**  
+   Created the following Dockerfile to containerize the application:
+
+```dockerfile
+FROM gradle:jdk17 AS builder
+WORKDIR /app
+
+# Install git
+RUN apt-get update && apt-get install -y git
+
+# Clone the repository from Bitbucket
+RUN git clone https://bitbucket.org/pssmatos/gradle_basic_demo/src/master/ .
+
+# Ensure gradlew has the correct permissions
+RUN chmod +x gradlew && ./gradlew build --no-daemon
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/basic_demo-0.1.0.jar ./basic_demo-0.1.0.jar
+
+EXPOSE 59001
+ENTRYPOINT ["java", "-cp", "basic_demo-0.1.0.jar", "basic_demo.ChatServerApp", "59001"]
+```
+
+
+The containerization process for the chat application utilizes a multi-stage Dockerfile approach. The configuration begins with a `gradle:jdk17` base image to handle the initial build phase,
+including repository cloning and compilation, then transitions to a streamlined `eclipse-temurin:17-jre-jammy` image for the runtime environment, copying only the essential JAR
+artifact and exposing port 59001 for client connections.
+
+4. **The image was constructed using:**
+```bash
+docker build -t joaocardoso/chat-server:version1 .
+```
+5. **with verification performed via:**
+ ```bash
+    docker images
+```
+![img_4.png](img_4.png)
+
+6. I executed the Docker container with the command below:
+    ```bash
+    docker run -p 59001:59001 joaocardoso/chat-server:version1
+    ```
+The -p option maps a port from the host machine to a port inside the container. In this case, port 59001 on the host is connected to port 59001 within the container. 
+Below is the result of the command, confirming the Docker container is running the chat server:
+
+  
+
+
+7. In a new terminal window, I moved to the directory where the chat client was located and ran the following commands
+   to build and run the chat client:
+    ```bash
+    ./gradlew build
+    ./gradlew runClient
+    ```
+![img_5.png](img_5.png)
+
+8. I connected to the chat server using two separate clients to verify the chat feature. 
+9. Shown below is the output from a chat client linked to the server running inside the Docker container, displaying a sample message:
+
+![img_6.png](img_6.png)
+
+   In the terminal where the Docker container was running, I could see the entrance and exit of new clients in the chat
+   server.
+
+![img_7.png](img_7.png)
+
+
+9. Lastly, I uploaded the Docker image to Docker Hub using the command below:
+    ```bash
+    docker push joaocardoso/chat-server:version1
+    ```
+
+In the Docker Hub repository, the image was pushed successfully and is available for use, as illustrated in the screenshot below:
+
+   ![img_8.png](img_8.png)
+
+------------------------------------------------------------------------------------------------
+## Dockerfile - version 2
+
+For the second version, I built the chat server locally on my machine and then copied the JAR file into the Docker image. Here’s the process I followed:
+
+1. First, I moved to the project directory and ran the Gradle build command to generate the JAR file:
+
+    ```bash
+    ./gradlew build
+    ```
+
+   This produced the `basic_demo-0.1.0.jar` inside the `build/libs` folder.
+
+2. I then navigated to the directory containing the Dockerfile for version 2.
+
+3. Below is the content of the Dockerfile I used:
+
+    ```dockerfile
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+COPY build/libs/basic_demo-0.1.0.jar ./basic_demo-0.1.0.jar
+
+EXPOSE 59001
+
+ENTRYPOINT ["java", "-cp", "basic_demo-0.1.0.jar", "basic_demo.ChatServerApp", "59001"]
+
+    ```
+
+   This Dockerfile is simpler than the first one because it doesn’t clone the repository or build the project inside the container. 
+   Instead, it copies the pre-built JAR file from the host machine into the Docker image and sets up the server to run on port 59001.
+
+4. I built the Docker image using the command below:
+
+    ```bash
+     docker build -f DockerfileV2 -t joaocardoso/chat-server:version2.
+    ```
+
+   The `-t` flag assigns a name and version to the image — in this case, `joaocardoso/chat-server:version2`.
+   The `-f` option specifies the Dockerfile to use for the build, and `../../..` sets the build context three directories above the current one to ensure all required files are accessible during the build process.
+
+5. To verify that the image was created correctly, I ran:
+
+    ```bash
+    docker images
+    ```
+
+6. I ran the Docker container with the following command:
+
+    ```bash
+    docker run -p 59001:59001 joaocardoso/chat-server:version2
+    ```
+
+   Below is the output confirming the Docker container is running the chat server:
+
+![img_9.png](img_9.png)
+
+7. I switched to the directory where the chat client was located and executed the command:
+
+    ```bash
+    ./gradlew runClient
+    ```
+
+   I opened two clients in separate terminals to test the chat functionality. Below is the output of the chat session:
+
+![img_10.png](img_10.png)
+
+   In the terminal where the Docker container was running, I could see notifications for client connections and disconnections:
+
+![img_11.png](img_11.png)
+
+8. Finally, I pushed the Docker image to Docker Hub with the command:
+
+    ```bash
+    docker push joaocardoso/chat-server:version2
+    ```
+
+   In the Docker Hub repository, the image was successfully pushed and available for use, as shown in the screenshot below:
+
+   ![img_12.png](img_12.png) 
+
+## Conclusion part3
+
+In this assignment, I successfully containerized a chat server application using Docker. 
+I created two versions of the Docker image: the first built the application within the Dockerfile itself, 
+while the second involved building the application locally and copying the generated JAR file into the image. 
+Both approaches showcased Docker's versatility in ensuring consistent application deployment across various environments.
+
 
 [Back to top](#ca2-part1-virtualization-with-vagrant-technical-report)
