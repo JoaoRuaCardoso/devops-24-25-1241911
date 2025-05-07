@@ -39,6 +39,18 @@
     - [Dockerfile - version 1](#dockerfile---version-1)
     - [Dockerfile - version 2](#dockerfile---version-2)
     - [Conclusion Part3](#conclusion-part3)
+
+- Part 4 Contents:
+    - [Part4 Introduction](#part4-introduction)
+    - [DB Dockerfile](#db-dockerfile)
+    - [Web Dockerfile](#web-dockerfile)
+    - [Docker Compose](#docker-compose)
+    - [Tag and Push Images](#tag-and-push-images)
+    - [Working with volumes](#working-with-volumes)
+    - [Alternative solution](#alternative-solution)
+    - [Conclusion Part4](#conclusion-part4)
+
+
 ## Part1 Introduction
 
 This report covers **Class Assignment 2 - Part 1**, focusing on virtualization with VirtualBox in the DevOps curriculum. 
@@ -663,7 +675,6 @@ In the Docker Hub repository, the image was pushed successfully and is available
 
    ![img_8.png](img_8.png)
 
-------------------------------------------------------------------------------------------------
 ## Dockerfile - version 2
 
 For the second version, I built the chat server locally on my machine and then copied the JAR file into the Docker image. Here’s the process I followed:
@@ -751,6 +762,154 @@ In this assignment, I successfully containerized a chat server application using
 I created two versions of the Docker image: the first built the application within the Dockerfile itself, 
 while the second involved building the application locally and copying the generated JAR file into the image. 
 Both approaches showcased Docker's versatility in ensuring consistent application deployment across various environments.
+
+
+## Part4 Introduction
+In this report, I describe the process of deploying a web application and its database using Docker containers. 
+The primary objective was to showcase how containerization can simplify building, running, and managing application services. 
+Alongside Docker, I evaluated Heroku, a cloud platform that offers a streamlined deployment experience. 
+The document explains how I created Dockerfiles for both the application and the database, used Docker Compose to coordinate the services, 
+and handled tagging and uploading Docker images to a repository. This hands-on experience enhanced my understanding of containerized environments 
+and current deployment strategies.
+
+## DB Dockerfile
+I began by creating a `Dockerfile` for the database service, which in this case was an H2 database server. 
+This file was placed inside a `db` directory with the following content:
+
+## DB Dockerfile
+I began by setting up a `Dockerfile` for the database service, using an H2 database server. 
+This `Dockerfile` was placed in the `db` directory and contained the following:
+
+```dockerfile
+FROM ubuntu:latest
+
+RUN apt-get update && \
+    apt-get install -y openjdk-11-jdk-headless && \
+    apt-get install unzip -y && \
+    apt-get install wget -y
+
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app/
+
+RUN wget https://repo1.maven.org/maven2/com/h2database/h2/1.4.200/h2-1.4.200.jar
+
+EXPOSE 8082
+EXPOSE 9092
+
+CMD ["java", "-cp", "./h2-1.4.200.jar", "org.h2.tools.Server", "-web", "-webAllowOthers", "-tcp", "-tcpAllowOthers", "-ifNotExists"]
+```
+##### Explanation:
+
+- **Base Image**: `ubuntu:latest` is used as the base image to provide a clean, updated environment.
+- **Java Installation**: OpenJDK 11 is installed to supply the required Java runtime for the H2 database. Additional tools like `unzip` and `wget` are included as well.
+- **Directory Setup**: A `/usr/src/app` directory is created to store the application files.
+- **H2 Database Download**: The H2 database JAR file is retrieved from Maven's repository.
+- **Port Exposure**: Ports `8082` and `9092` are exposed to enable web and TCP access.
+- **Start Command**: Runs the H2 database server with options to allow web and TCP connections and to automatically create the database if it doesn't already exist.
+
+## Web Dockerfile
+
+Next, I created a `Dockerfile` inside a `web` directory with the following content:
+
+```dockerfile
+# Create a basic container with Java 17 and running Tomcat 10
+FROM tomcat:10-jdk17-openjdk-slim
+
+# Create a directory for the project and clone the repository there
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app/
+
+# Update package list and install Git
+RUN apt-get update && apt-get install -y git
+
+# Clone the repository and navigate to the project directory
+RUN git clone https://github.com/JoaoRuaCardoso/devops-24-25-1241911.git .
+
+# Navigate to the project directory
+WORKDIR /usr/src/app/CA1/Part3/react-and-spring-data-rest-basic
+
+# Change the permissions of the gradlew file to make it executable
+RUN chmod +x gradlew
+
+# Run the gradle build command
+RUN ./gradlew build
+
+# Copy the generated WAR file to the Tomcat webapps directory
+RUN cp ./build/libs/react-and-spring-data-rest-basic-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/
+
+# State the port that our application will run on
+EXPOSE 8080
+
+# Start Tomcat automatically when the container starts
+CMD ["catalina.sh", "run"]
+```
+##### Explanation:
+- **Base Image**: `tomcat:10-jdk17-openjdk-slim` is used, offering a lightweight Tomcat 10 setup with OpenJDK 17.
+- **Directory Setup**: A `/usr/src/app` directory is created to store project files.
+- **Git Installation**: Git is installed to enable repository cloning.
+- **Repository Clone**: The project repository is cloned from GitHub into the working directory.
+- **Project Build**: The script moves into the project directory, makes the Gradle wrapper executable, and runs the Gradle build command to compile the application.
+- **WAR File Deployment**: The generated WAR file is copied into Tomcat's `webapps` directory for deployment.
+- **Port Exposure**: Port `8080` is exposed to allow external access to the web application.
+- **Start Command**: Tomcat is started to serve the deployed application.
+
+## Docker Compose
+
+To manage both the database and web application containers, I created a `docker-compose.yml` file. 
+This file defines the services and their interactions.
+
+```yaml
+services:
+  web:
+    build: ./web
+    ports:
+      - "8080:8080"
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.56.10
+    depends_on:
+      - db
+
+  db:
+    build: ./db
+    ports:
+      - "8082:8082"
+      - "9092:9092"
+    volumes:
+      - ./data:/usr/src/data-backup
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.56.11
+
+networks:
+  my_custom_network:
+    external: true
+```
+
+##### Explanation:
+
+- **Services**:
+    - **Web Service**:
+        - The web service is built from the `./web` directory.
+        - Port `8080` is mapped to the host.
+        - The service is connected to `my_custom_network` with a static IP of `192.168.56.10`.
+        - It depends on the `db` service, ensuring the database starts before the web application.
+    - **DB Service**:
+        - The database service is built from the `./db` directory.
+        - Ports `8082` and `9092` are mapped to the host.
+        - A volume is mounted to ensure data persistence.
+        - The service is connected to `my_custom_network` with a static IP of `192.168.56.11`.
+- **Networks**:
+    - `my_custom_network`: An external custom network is used, which must be created outside of the `docker-compose.yml` file to ensure correct IP address assignment.
+
+
+
+
+
+
+
+
 
 
 [Back to top](#ca2-part1-virtualization-with-vagrant-technical-report)
