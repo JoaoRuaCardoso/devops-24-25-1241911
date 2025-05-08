@@ -47,7 +47,7 @@
     - [Docker Compose](#docker-compose)
     - [Tag and Push Images](#tag-and-push-images)
     - [Working with volumes](#working-with-volumes)
-    - [Alternative solution](#alternative-solution)
+    - [Alternative solution Part4](#alternative-solution-part4)
     - [Conclusion Part4](#conclusion-part4)
 
 
@@ -798,61 +798,77 @@ EXPOSE 8082
 EXPOSE 9092
 
 CMD ["java", "-cp", "./h2-1.4.200.jar", "org.h2.tools.Server", "-web", "-webAllowOthers", "-tcp", "-tcpAllowOthers", "-ifNotExists"]
+
 ```
 ##### Explanation:
 
-- **Base Image**: `ubuntu:latest` is used as the base image to provide a clean, updated environment.
-- **Java Installation**: OpenJDK 11 is installed to supply the required Java runtime for the H2 database. Additional tools like `unzip` and `wget` are included as well.
-- **Directory Setup**: A `/usr/src/app` directory is created to store the application files.
-- **H2 Database Download**: The H2 database JAR file is retrieved from Maven's repository.
-- **Port Exposure**: Ports `8082` and `9092` are exposed to enable web and TCP access.
-- **Start Command**: Runs the H2 database server with options to allow web and TCP connections and to automatically create the database if it doesn't already exist.
+- **Base Image**: Uses `ubuntu:latest` as the base image to provide a clean and updated environment.
+- **Java Installation**: Installs OpenJDK 11 (`openjdk-11-jdk-headless`) to run Java applications, along with `unzip` and `wget` for handling file downloads and archives.
+- **Application Directory**: Creates a directory at `/usr/src/app` to store application files.
+- **Working Directory**: Sets `/usr/src/app/` as the working directory so that all following commands are executed from this location.
+- **H2 Database Download**: Downloads the H2 database JAR file (`h2-1.4.200.jar`) from Maven's official repository.
+- **Port Exposure**: Exposes ports `8082` (for the H2 web console) and `9092` (for the TCP server) to enable external connections.
+- **Container Command**: Starts the H2 database server with several options:
+    - `-web`: Enables the H2 web-based console.
+    - `-webAllowOthers`: Allows access to the web console from external machines.
+    - `-tcp`: Starts the TCP server for database connections.
+    - `-tcpAllowOthers`: Permits TCP connections from external hosts.
+    - `-ifNotExists`: Automatically creates the database if it doesn't already exist.
 
 ## Web Dockerfile
 
 Next, I created a `Dockerfile` inside a `web` directory with the following content:
 
 ```dockerfile
-# Create a basic container with Java 17 and running Tomcat 10
-FROM tomcat:10-jdk17-openjdk-slim
+# Use Tomcat image instead of JDK
+FROM tomcat:10.1-jdk17-temurin
 
-# Create a directory for the project and clone the repository there
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app/
+# Install necessary tools (Git, Node.js, npm, and Nano for editing)
+RUN apt-get update \
+    && apt-get install -y \
+    git \
+    nano \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
 
-# Update package list and install Git
-RUN apt-get update && apt-get install -y git
+# Set working directory
+WORKDIR /usr/src/app
 
-# Clone the repository and navigate to the project directory
+# Clone your repository
 RUN git clone https://github.com/JoaoRuaCardoso/devops-24-25-1241911.git .
 
-# Navigate to the project directory
-WORKDIR /usr/src/app/CA1/Part3/react-and-spring-data-rest-basic
+# Move to your project directory
+WORKDIR /usr/src/app/ca1/part3/react-and-spring-data-rest-basic
 
-# Change the permissions of the gradlew file to make it executable
-RUN chmod +x gradlew
+# Make gradlew executable and build the .war file
+RUN chmod +x gradlew \
+    && ./gradlew war \
+    && cp build/libs/react-and-spring-data-rest-basic-0.0.1-SNAPSHOT-plain.war /usr/local/tomcat/webapps/basic-0.0.1-SNAPSHOT.war
 
-# Run the gradle build command
-RUN ./gradlew build
-
-# Copy the generated WAR file to the Tomcat webapps directory
-RUN cp ./build/libs/react-and-spring-data-rest-basic-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/
-
-# State the port that our application will run on
+# Expose the port that Tomcat listens on (8080)
 EXPOSE 8080
 
-# Start Tomcat automatically when the container starts
+# Start Tomcat
 CMD ["catalina.sh", "run"]
 ```
 ##### Explanation:
-- **Base Image**: `tomcat:10-jdk17-openjdk-slim` is used, offering a lightweight Tomcat 10 setup with OpenJDK 17.
-- **Directory Setup**: A `/usr/src/app` directory is created to store project files.
-- **Git Installation**: Git is installed to enable repository cloning.
-- **Repository Clone**: The project repository is cloned from GitHub into the working directory.
-- **Project Build**: The script moves into the project directory, makes the Gradle wrapper executable, and runs the Gradle build command to compile the application.
-- **WAR File Deployment**: The generated WAR file is copied into Tomcat's `webapps` directory for deployment.
-- **Port Exposure**: Port `8080` is exposed to allow external access to the web application.
-- **Start Command**: Tomcat is started to serve the deployed application.
+
+- **Base Image**: Uses `tomcat:10.1-jdk17-temurin` as the base image, which includes both the Tomcat 10.1 server and Java 17 provided by Eclipse Temurin.
+- **Tool Installation**: Installs essential development tools:
+    - `git` for version control.
+    - `nano` for in-container file editing.
+    - `nodejs` and `npm` for handling any Node-based frontend dependencies or scripts.
+    - Cleans up the apt cache after installation to reduce image size.
+- **Working Directory Setup**: Sets `/usr/src/app` as the working directory for application files and processes.
+- **Repository Cloning**: Clones the specified GitHub repository directly into the working directory.
+- **Project Directory Change**: Navigates to the project subdirectory containing the Gradle build files and application source code.
+- **Build Process**:
+    - Grants execution permissions to the `gradlew` script.
+    - Builds the `.war` file using Gradle.
+    - Copies the generated `.war` file to Tomcat’s `webapps` directory, renaming it for deployment.
+- **Port Exposure**: Exposes port `8080` to allow external access to the Tomcat server.
+- **Start Command**: Runs Tomcat using its standard `catalina.sh run` command to start the server in the foreground.
 
 ## Docker Compose
 
@@ -884,32 +900,157 @@ services:
 
 networks:
   my_custom_network:
-    external: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.168.56.0/24"
+
+volumes:
+  db_data: {}
+
+
 ```
 
 ##### Explanation:
 
 - **Services**:
-    - **Web Service**:
-        - The web service is built from the `./web` directory.
-        - Port `8080` is mapped to the host.
-        - The service is connected to `my_custom_network` with a static IP of `192.168.56.10`.
-        - It depends on the `db` service, ensuring the database starts before the web application.
-    - **DB Service**:
-        - The database service is built from the `./db` directory.
-        - Ports `8082` and `9092` are mapped to the host.
-        - A volume is mounted to ensure data persistence.
-        - The service is connected to `my_custom_network` with a static IP of `192.168.56.11`.
+    - **web**:
+        - **Build Context**: Uses the Dockerfile inside the `./web` directory to build the image.
+        - **Ports**: Maps host port `8080` to container port `8080` for web access.
+        - **Networks**: Connects to a custom bridge network `my_custom_network` with a fixed IPv4 address `192.168.56.10`.
+        - **depends_on**: Ensures the `db` service starts before the `web` service.
+
+    - **db**:
+        - **Build Context**: Uses the Dockerfile inside the `./db` directory to build the image.
+        - **Ports**:
+            - Maps host port `8082` to container port `8082` (for H2 web console).
+            - Maps host port `9092` to container port `9092` (for H2 TCP connections).
+        - **Volumes**:
+            - Mounts the host directory `./data` to `/usr/src/data-backup` inside the container for persistent data storage.
+        - **Networks**: Connects to `my_custom_network` with a fixed IPv4 address `192.168.56.11`.
+
 - **Networks**:
-    - `my_custom_network`: An external custom network is used, which must be created outside of the `docker-compose.yml` file to ensure correct IP address assignment.
+    - **my_custom_network**:
+        - Uses the `bridge` driver for container communication.
+        - **IPAM (IP Address Management)**:
+            - Defines a custom subnet `192.168.56.0/24`.
+            - Assigns static IP addresses to the `web` and `db` services.
 
+- **Volumes**:
+    - **db_data**: Declares a named volume `db_data` (though it’s currently unused in the service definitions — ready to be linked to containers if needed).
 
+To build and run the services from `docker-compose.yml`, I used:
 
+```bash
+docker-compose up --build
+```
 
+Once running, the web application was accessible at:
+- http://localhost:8080/basic-0.0.1-SNAPSHOT/
 
+And the H2 database console at:
+- http://localhost:8082
 
+Below are screenshots confirming access to both.
 
+![img_13.png](img_13.png)
 
+![img_14.png](img_14.png)
 
+## Tag and Push Images
 
-[Back to top](#ca2-part1-virtualization-with-vagrant-technical-report)
+To ensure that the images were correctly tagged and pushed to my Docker Hub repository, I followed these steps:
+
+First, I listed all Docker images to check their IDs using:
+
+```bash
+docker images
+```
+
+This helped me confirm the Image IDs for the images I needed to tag and push.
+
+Next, I tagged the images with my Docker Hub username and appropriate names. Using the image names, I executed:
+
+```bash
+docker tag part4-db:latest joaogaranhascardoso/part4-db:latest
+docker tag part4-web:latest joaogaranhascardoso/part4-web:latest
+```
+
+After tagging, I pushed the images to Docker Hub with:
+
+```bash
+docker push joaogaranhascardoso/part4-db:latest
+docker push joaogaranhascardoso/part4-web:latest
+```
+
+As a result, both images were successfully uploaded to my Docker Hub account.
+
+![img_16.png](img_16.png)
+
+## Working with Volumes
+
+To ensure that the database file was correctly placed in the volume, I used the `docker-compose exec` command to access the running `db` container and manually copy the required file:
+
+```bash
+docker-compose exec db bash
+```
+
+Inside the container shell, I copied the `h2-1.4.200.jar` file to the mounted volume directory:
+
+```bash
+cp /usr/src/app/h2-1.4.200.jar /usr/src/data-backup
+exit
+```
+
+This sequence opens the `db` container, copies the database file to the volume directory, and exits the container. It guarantees the database file is backed up to the volume and safely persisted on the host machine.
+
+## Alternative Solution Part4
+
+As an alternative deployment, I explored using **Heroku** to host the web application.
+
+1. Created a Heroku account, installed the CLI, and logged in:
+
+    ```bash
+    heroku login
+    ```
+
+2. Created a new Heroku app:
+
+    ```bash
+    heroku create my-app-name
+    ```
+
+3. Deployed the WAR file by pushing to Heroku’s Git repository:
+
+    ```bash
+    git push heroku master
+    ```
+
+4. Opened the deployed app in the browser:
+
+    ```bash
+    heroku open
+    ```
+
+5. Pushed Docker images to Heroku Container Registry:
+
+    ```bash
+    heroku container:login
+    heroku container:push web --app my-app-name
+    heroku container:push db --app my-app-name
+    ```
+
+6. Released the images to the Heroku app:
+
+    ```bash
+    heroku container:release web db --app my-app-name
+    ```
+
+7. Accessed the running application using the Heroku-provided URL.
+
+## Conclusion Part4
+
+In this project, I successfully containerized a web application and a database with Docker, managing them via Docker Compose. 
+I set up volumes for data persistence and tested deployment on **Heroku**, demonstrating flexibility in cloud-based application 
+delivery.
+
