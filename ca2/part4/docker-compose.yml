@@ -29,6 +29,9 @@ services:
     networks:
       - ca2net
     restart: unless-stopped
+#    volumes:
+#      - ./config/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+#      - .cd /config/webapps:/usr/local/tomcat/webapps
 
 volumes:
   h2data:
