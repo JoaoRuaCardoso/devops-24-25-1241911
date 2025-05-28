@@ -81,13 +81,12 @@ ENTRYPOINT ["java","-jar","app.jar"]
         }
 
         stage('Build Docker Image') {
-            steps {
-                dir('ca1/part3/react-and-spring-data-rest-basic') {
+            dir('ca1/part3/react-and-spring-data-rest-basic') {
                     echo 'Building & Pushing Docker image...'
                     script {
-                        def app = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}", '.')
-                        docker.withRegistry(env.DOCKER_REGISTRY, env.DOCKER_CREDENTIALS_ID) {
-                            app.push()
+                        docker.build("joaogaranhascardoso/springboot-app:${env.BUILD_ID}")
+                        withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
+                            sh "docker push joaogaranhascardoso/springboot-app:${env.BUILD_ID}"
                         }
                     }
                 }
